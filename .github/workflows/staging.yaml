@@ -36,7 +36,7 @@ jobs:
           file: ./Dockerfile.app
           push: true
           tags: |
-            ${{ vars.REPO }}:${{ env.TAG }}
+            jayps/k8s-nginx-demo:${{ env.TAG }}
 
   deployment:
     runs-on: ubuntu-latest
@@ -73,5 +73,4 @@ jobs:
             --create-namespace \
             --namespace staging \
             --values ./chart/values.yaml \
-            --set image.repository="${{ vars.REPO }}" \
             --set image.tag="$TAG"

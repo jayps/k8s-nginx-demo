@@ -72,5 +72,4 @@ jobs:
             --create-namespace \
             --namespace production \
             --values ./chart/values.yaml \
-            --set image.repository="${{ vars.REPO }}" \
             --set image.tag="${{ needs.build.outputs.tag }}"
