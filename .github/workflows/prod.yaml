@@ -18,11 +18,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - id: resolve_tag
+      - name: Compute tag
         run: |
-          # Prefer the release tag when triggered by a GitHub release
-          TAG="${{ github.event.release.tag_name || inputs.tag || github.ref_name }}"
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          TAG="staging-${GITHUB_SHA::7}"
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+          echo "Deploying to production: $TAG"
 
       - run: echo "Releasing ${{ steps.resolve_tag.outputs.tag }}"
 
@@ -42,7 +42,7 @@ jobs:
           file: ./Dockerfile.app
           push: true
           tags: |
-            ${{ vars.REPO }}:${{ steps.resolve_tag.outputs.tag }}
+            jayps/k8s-nginx-demo:${{ steps.resolve_tag.outputs.tag }}
 
   deployment:
     runs-on: ubuntu-latest
@@ -50,6 +50,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Compute tag (same as build job)
+        run: |
+          TAG="staging-${GITHUB_SHA::7}"
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+          echo "Using tag in Helm: $TAG"
 
       - name: Install Helm
         uses: azure/setup-helm@v4
@@ -72,4 +78,4 @@ jobs:
             --create-namespace \
             --namespace production \
             --values ./chart/values.yaml \
-            --set image.tag="${{ needs.build.outputs.tag }}"
+            --set image.tag="$TAG"
