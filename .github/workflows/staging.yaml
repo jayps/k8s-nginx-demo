@@ -1,13 +1,9 @@
-name: Build and deploy to production
+name: Build and deploy to staging
 
 on:
-  release:
-    types: [published]
+  push:
+    branches: [main]
   workflow_dispatch:
-    inputs:
-      tag:
-        description: "Tag to release (e.g. v1.2.3)"
-        required: true
 
 jobs:
   build:
@@ -20,11 +16,11 @@ jobs:
 
       - id: resolve_tag
         run: |
-          # Prefer the release tag when triggered by a GitHub release
-          TAG="${{ github.event.release.tag_name || inputs.tag || github.ref_name }}"
+          # Use short commit SHA for staging builds
+          TAG="staging-${GITHUB_SHA::7}"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
-      - run: echo "Releasing ${{ steps.resolve_tag.outputs.tag }}"
+      - run: echo "Deploying to staging: ${{ steps.resolve_tag.outputs.tag }}"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -66,11 +62,11 @@ jobs:
 
       - name: Helm install / upgrade
         run: |
-          helm upgrade k8s-nginx-demo ./chart/ \
+          helm upgrade k8s-nginx-demo-staging ./chart/ \
             --install \
             --atomic \
             --create-namespace \
-            --namespace production \
+            --namespace staging \
             --values ./chart/values.yaml \
             --set image.repository="${{ vars.REPO }}" \
             --set image.tag="${{ needs.build.outputs.tag }}"
