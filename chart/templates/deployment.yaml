@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: k8s-nginx-demo
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        image: jayps/k8s-nginx-demo:{{ .Values.image.tag }}
         imagePullPolicy: IfNotPresent
         ports:
         - name: http
