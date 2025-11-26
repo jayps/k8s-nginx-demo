@@ -1,0 +1,3 @@
+image:
+  repository: ""  # Will be set from CI/CD
+  tag: "latest"   # Will be set from CI/CD
