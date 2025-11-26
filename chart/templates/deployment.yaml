@@ -3,16 +3,16 @@ kind: Deployment
 metadata:
   name: k8s-nginx-demo
   labels:
-    k8s-nginx-demo
+    app: k8s-nginx-demo
 spec:
   replicas: 1
   selector:
     matchLabels:
-      k8s-nginx-demo
+      app: k8s-nginx-demo
   template:
     metadata:
       labels:
-        k8s-nginx-demo
+        app: k8s-nginx-demo
     spec:
       containers:
       - name: k8s-nginx-demo
