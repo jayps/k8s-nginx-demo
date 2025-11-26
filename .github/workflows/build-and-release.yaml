@@ -57,8 +57,8 @@ jobs:
       - name: Build & push image
         uses: docker/build-push-action@v6
         with:
-          context: ..
-          file: ./docker/Dockerfile
+          context: .
+          file: ./Dockerfile
           push: true
           tags: jayps/k8s-nginx-demo:${{ env.TAG }}
 
